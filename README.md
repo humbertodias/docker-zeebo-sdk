@@ -1,5 +1,5 @@
 [![Deploy](https://github.com/humbertodias/docker-zeebo-sdk/actions/workflows/deploy.yml/badge.svg)](https://github.com/humbertodias/docker-zeebo-sdk/actions/workflows/deploy.yml)
-[![Docker Pulls](https://img.shields.io/docker/pulls/hldtux/sdl-compiler-wasm.svg?logo=docker)](https://hub.docker.com/r/hldtux/docker-zeebo-sdk)
+[![Docker Pulls](https://img.shields.io/docker/pulls/hldtux/docker-zeebo-sdk.svg?logo=docker)](https://hub.docker.com/r/hldtux/docker-zeebo-sdk)
 
 
 # zeebo-sdk
