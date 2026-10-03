@@ -28,5 +28,7 @@ make -C examples/hello
 
 Running on [zeebx-emu](https://github.com/ZeebxTeam/zeebx-emu)
 
+<img width="1920" height="543" alt="image" src="https://github.com/user-attachments/assets/cfbe1288-7446-43e5-9508-5654afeccc4f" />
+
 <img width="1089" height="715" alt="image" src="https://github.com/user-attachments/assets/84bcd570-4bad-496b-9952-8f846cfaab82" />
 
