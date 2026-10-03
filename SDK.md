@@ -7,14 +7,7 @@ The tree comes from the NSIS installer `BMP_BREWPLATFORM_4.0.2.20_SETUP_0.exe` (
 From the repository root, with [7-Zip](https://www.7-zip.org/) installed:
 
 ```bash
-installer="/path/to/BMP_BREWPLATFORM_4.0.2.20_SETUP_0.exe"
-rm -rf sdk/brew/inc sdk/brew/sdk
-7z x "$installer" -osdk/brew \
-  "BREW 4.0.2 SP19/inc" \
-  "BREW 4.0.2 SP19/sdk"
-mv "sdk/brew/BREW 4.0.2 SP19/inc" sdk/brew/inc
-mv "sdk/brew/BREW 4.0.2 SP19/sdk" sdk/brew/sdk
-rmdir "sdk/brew/BREW 4.0.2 SP19"
+make sdk/unzip INSTALLER=/path/to/BMP_BREWPLATFORM_4.0.2.20_SETUP_0.exe
 ```
 
 `sdk/inc` includes headers with the relative path `../../inc/`, so `inc` and `sdk` must stay siblings. After the move, `sdk/brew` looks like this:
