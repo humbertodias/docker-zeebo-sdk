@@ -1,8 +1,10 @@
 [![Deploy](https://github.com/humbertodias/docker-zeebo-sdk/actions/workflows/deploy.yml/badge.svg)](https://github.com/humbertodias/docker-zeebo-sdk/actions/workflows/deploy.yml)
+[![Docker Pulls](https://img.shields.io/docker/pulls/hldtux/sdl-compiler-wasm.svg?logo=docker)](https://hub.docker.com/r/hldtux/docker-zeebo-sdk)
+
 
 # zeebo-sdk
 
-Linux/amd64 image with a Zeebo (Tectoy) homebrew toolchain: `armeb-none-eabi` GCC, Ubuntu `arm-none-eabi` and Qualcomm `elf2mod.exe` under Wine.
+Linux/amd64 image with a Zeebo homebrew toolchain: `armeb-none-eabi` GCC, Ubuntu `arm-none-eabi` and Qualcomm `elf2mod.exe` under Wine.
 
 ## Use
 
