@@ -25,3 +25,8 @@ docker run --rm -it -v "$PWD":/src -v /path/to/brew:/opt/brew hldtux/zeebo-sdk
 ```bash
 make -C examples/hello
 ```
+
+Running on [zeebx-emu](https://github.com/ZeebxTeam/zeebx-emu)
+
+<img width="1089" height="715" alt="image" src="https://github.com/user-attachments/assets/84bcd570-4bad-496b-9952-8f846cfaab82" />
+
