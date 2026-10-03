@@ -7,7 +7,6 @@ Linux/amd64 image with a Zeebo (Tectoy) homebrew toolchain: `armeb-none-eabi` GC
 ## Use
 
 ```bash
-docker pull hldtux/zeebo-sdk
 docker run --rm -it -v "$PWD":/src hldtux/zeebo-sdk
 ```
 
