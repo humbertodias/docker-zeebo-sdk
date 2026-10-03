@@ -1,0 +1,16 @@
+#!/bin/sh
+# The compiler is in the image. The Qualcomm BREW headers are not.
+if [ ! -f /opt/brew/sdk/inc/AEE.h ]; then
+    cat >&2 <<'EOF'
+BREW SDK not found at /opt/brew.
+
+This image has the compiler, elf2mod, and cifc. It does not include the
+Qualcomm BREW 4.0.2 headers. To compile an applet, mount your own SDK:
+
+  docker run --rm -it -v "$PWD":/src -v /path/to/brew:/opt/brew hldtux/zeebo-sdk
+
+/path/to/brew must contain inc/ and sdk/. BREWDIR is /opt/brew/sdk.
+See SDK.md in the repository for how to unpack the installer into sdk/brew.
+EOF
+fi
+exec "$@"

@@ -1,0 +1,7 @@
+#ifndef HELLO_BID
+#define HELLO_BID
+
+/* Must match the ClassID in the applet MIF. */
+#define AEECLSID_HELLOWORLD 0x0100F001
+
+#endif

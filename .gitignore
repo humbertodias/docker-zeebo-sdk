@@ -1,0 +1,8 @@
+sdk/brew/**
+!sdk/brew/.gitkeep
+
+.DS_Store
+
+*.elf
+*.mod
+*.mif

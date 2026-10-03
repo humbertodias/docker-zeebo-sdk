@@ -100,8 +100,8 @@ RUN set -eux; \
     rm -f /tmp/zeebo-smoke.elf; \
     chmod -R a+rX /opt/zeebo
 
-# 32-bit Wine exists only to run elf2mod.exe. Keep this layer after the
-# toolchain so a tool update does not rebuild GCC.
+# 32-bit Wine exists only to run elf2mod.exe and cifc.exe. Keep this layer
+# after the toolchain so a tool update does not rebuild GCC.
 RUN dpkg --add-architecture i386 \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
@@ -121,9 +121,19 @@ RUN dpkg --add-architecture i386 \
 
 COPY bin/elf2mod.exe /opt/brew-toolset/bin/elf2mod.exe
 COPY bin/elf2mod/src/gnu/elf2mod.x /opt/brew-toolset/bin/elf2mod/src/gnu/elf2mod.x
-RUN chmod 755 /opt/brew-toolset/bin/elf2mod.exe
+COPY bin/cifc.exe /opt/brew-toolset/bin/cifc.exe
+RUN chmod 755 /opt/brew-toolset/bin/elf2mod.exe /opt/brew-toolset/bin/cifc.exe
 
 ENV WINEDEBUG=-all
 
+# BREW 4.0.2 SP19 (inc + sdk). Populated from sdk/brew at build time.
+# That tree is not committed; a checkout without it still builds.
+# sdk-check warns at startup when the headers are absent.
+COPY sdk/brew/ /opt/brew/
+COPY bin/sdk-check /usr/local/bin/sdk-check
+RUN chmod 755 /usr/local/bin/sdk-check
+ENV BREWDIR=/opt/brew/sdk
+
 WORKDIR /src
+ENTRYPOINT ["sdk-check"]
 CMD ["bash"]

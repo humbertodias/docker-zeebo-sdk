@@ -11,4 +11,18 @@ docker pull hldtux/zeebo-sdk
 docker run --rm -it -v "$PWD":/src hldtux/zeebo-sdk
 ```
 
-The toolchain is on `PATH` under `/opt/zeebo`. `elf2mod.exe` is at `/opt/brew-toolset/bin/elf2mod.exe`.
+The toolchain is on `PATH` under `/opt/zeebo`. `elf2mod.exe` and `cifc.exe` are under `/opt/brew-toolset/bin`.
+
+The Qualcomm BREW 4.0.2 headers are not in the image. On startup the container warns until you mount your own SDK at `/opt/brew` (`inc/` and `sdk/`, `BREWDIR=/opt/brew/sdk`). How to unpack the installer into `sdk/brew` is in [SDK.md](SDK.md).
+
+```bash
+docker run --rm -it -v "$PWD":/src -v /path/to/brew:/opt/brew hldtux/zeebo-sdk
+```
+
+## Example
+
+[`examples/hello`](examples/hello) paints the screen black and draws **Hello World from Zeebo** in white, centered. What each file is for is in [`examples/hello/README.md`](examples/hello/README.md).
+
+```bash
+make -C examples/hello
+```

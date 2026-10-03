@@ -1,0 +1,17 @@
+include "hello.bid"
+
+-- Menu name. resbaseid below points at this string.
+ModRsc {
+   id   = 20,
+   type = 1,
+   data = EncStringRscData(0xff, "Hello World from Zeebo")
+}
+
+-- This is the applet the shell creates in hello.mod.
+Applet {
+   appletid     = AEECLSID_HELLOWORLD,
+   resbaseid    = 20,
+   applethostid = 0,
+   type         = 0,
+   privs        = {},
+}
