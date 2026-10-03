@@ -1,5 +1,5 @@
 # Zeebo (Tectoy) homebrew toolchain (linux/amd64).
-#   docker build --platform linux/amd64 -t bennugd64-zeebo .
+#   docker build --platform linux/amd64 -t zeebo-sdk .
 #
 # Toolchain only: does not clone a game repo or bake Bennu into the image.
 # The console is an ARM1136 (ARMv6, soft-float) running BREW. Shipped modules

@@ -1,5 +1,5 @@
 # Optional thin image. The default Dockerfile already contains Wine and elf2mod.exe.
-#   docker build --platform linux/amd64 -t bennugd64-zeebo-wine -f Dockerfile.wine .
+#   docker build --platform linux/amd64 -t zeebo-sdk-wine -f Dockerfile.wine .
 
 FROM ubuntu:22.04
 
