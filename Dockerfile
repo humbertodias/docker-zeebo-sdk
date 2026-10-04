@@ -105,7 +105,7 @@ RUN set -eux; \
 RUN dpkg --add-architecture i386 \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-        wine wine32 gcc-arm-none-eabi libnewlib-arm-none-eabi p7zip-full \
+        wine wine32 gcc-arm-none-eabi libnewlib-arm-none-eabi p7zip-full msitools \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /opt/brew-toolset/bin/elf2mod/src/gnu /opt/zeebo/bin \
     && test -d /usr/lib/arm-none-eabi/include \

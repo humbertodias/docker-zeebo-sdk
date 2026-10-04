@@ -1,7 +1,8 @@
 #!/bin/sh
 # The compiler is in the image. The Qualcomm BREW headers are not.
-# If they are missing at startup, download the installer and unpack it.
+# If they are missing at startup, download the installers and unpack them.
 SDK_URL="https://archive.org/download/bmp-brewplatform-4.0.2.20-setup-0/BMP_BREWPLATFORM_4.0.2.20_SETUP_0.exe"
+ZEEBO_URL="https://archive.org/download/zeebo-sdkinstaller/ZeeboSDKInstaller.msi"
 
 unpack() {
     installer=$1
@@ -15,6 +16,28 @@ unpack() {
     rmdir "$dest/BREW 4.0.2 SP19"
     test -f "$dest/sdk/inc/AEE.h"
     test -f "$dest/sdk/src/AEEAppGen.c"
+}
+
+# ZeeboSDKInstaller.msi drops the IHID headers into the BREW 4.0.2 tree.
+install_zeebo() {
+    msi=$1
+    dest=$2
+    tmp=$(mktemp -d)
+    (
+        set -e
+        cd "$tmp"
+        msiextract "$msi" >/dev/null
+        ext="$tmp/BREW402SP09 IHID Extension Folder"
+        packs="$tmp/BREW402SP09 Devicepacks Folder/devicepacks"
+        test -f "$ext/sdk/inc/AEEIHID.h"
+        mkdir -p "$dest/sdk/inc" "$dest/sdk/src" "$dest/devicepacks"
+        cp -a "$ext/sdk/inc/." "$dest/sdk/inc/"
+        cp -a "$ext/sdk/src/." "$dest/sdk/src/"
+        cp -a "$packs/." "$dest/devicepacks/"
+    )
+    status=$?
+    rm -rf "$tmp"
+    return "$status"
 }
 
 if [ ! -f /opt/brew/sdk/inc/AEE.h ]; then
@@ -36,5 +59,16 @@ See SDK.md in the repository for how to unpack the installer into sdk/brew.
 EOF
     fi
     rm -f "$installer"
+fi
+
+if [ ! -f /opt/brew/sdk/inc/AEEIHID.h ]; then
+    echo "Zeebo IHID headers not found. Downloading ZeeboSDKInstaller.msi..." >&2
+    msi=$(mktemp)
+    if wget -O "$msi" "$ZEEBO_URL" && install_zeebo "$msi" /opt/brew; then
+        echo "Zeebo IHID headers installed at /opt/brew/sdk/inc." >&2
+    else
+        echo "ZeeboSDKInstaller.msi could not be unpacked. See SDK.md." >&2
+    fi
+    rm -f "$msi"
 fi
 exec "$@"
