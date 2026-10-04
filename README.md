@@ -9,7 +9,7 @@ Linux/amd64 image with a Zeebo homebrew toolchain.
 docker run --rm -it -v "$PWD":/src hldtux/zeebo-sdk
 ```
 
-The BREW headers are not in the image. [SDK.md](SDK.md) shows how to unpack them into `sdk/brew`. Mount that directory to compile an applet:
+The BREW headers are not in the image. If `sdk/brew` is mounted and still empty, the container downloads the installer and unpacks it. [SDK.md](SDK.md) has the details. Mount that directory to compile an applet:
 
 ```bash
 docker run --rm -it -v "$PWD":/src -v "$PWD/sdk/brew":/opt/brew hldtux/zeebo-sdk
