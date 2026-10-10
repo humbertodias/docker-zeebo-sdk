@@ -140,9 +140,20 @@ ENV WINEDEBUG=-all
 # Downloaded at build time so the image already has the headers.
 ENV BREWDIR=/opt/brew/sdk
 RUN set -eux; \
+    fetch() { \
+        wget -O "$2" \
+            --tries=8 \
+            --timeout=60 \
+            --waitretry=15 \
+            --retry-connrefused \
+            --retry-on-http-error=403,429,500,502,503,504 \
+            --user-agent="zeebo-sdk build (https://github.com/humbertodias/docker-zeebo-sdk)" \
+            "$1"; \
+        test "$(stat -c%s "$2")" -gt 1000000; \
+    }; \
     brew_exe=$(mktemp); \
     zeebo_msi=$(mktemp); \
-    wget -O "$brew_exe" "https://archive.org/download/bmp-brewplatform-4.0.2.20-setup-0/BMP_BREWPLATFORM_4.0.2.20_SETUP_0.exe"; \
+    fetch "https://archive.org/download/bmp-brewplatform-4.0.2.20-setup-0/BMP_BREWPLATFORM_4.0.2.20_SETUP_0.exe" "$brew_exe"; \
     mkdir -p /opt/brew; \
     7z x "$brew_exe" -o/opt/brew \
         "BREW 4.0.2 SP19/inc" \
@@ -153,7 +164,7 @@ RUN set -eux; \
     rm -f "$brew_exe"; \
     test -f /opt/brew/sdk/inc/AEE.h; \
     test -f /opt/brew/sdk/src/AEEAppGen.c; \
-    wget -O "$zeebo_msi" "https://archive.org/download/zeebo-sdkinstaller/ZeeboSDKInstaller.msi"; \
+    fetch "https://archive.org/download/zeebo-sdkinstaller/ZeeboSDKInstaller.msi" "$zeebo_msi"; \
     tmp=$(mktemp -d); \
     ( cd "$tmp" && msiextract "$zeebo_msi" >/dev/null ); \
     ext="$tmp/BREW402SP09 IHID Extension Folder"; \
