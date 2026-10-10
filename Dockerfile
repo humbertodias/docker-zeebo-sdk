@@ -101,9 +101,9 @@ RUN set -eux; \
     rm -f /tmp/zeebo-smoke.elf; \
     chmod -R a+rX /opt/zeebo
 
-# elf2mod.exe and cifc.exe are 32-bit Windows tools. amd64 installs wine32.
-# arm64 has no i386 archive, so it installs Wine without wine32. Keep this
-# layer after the toolchain so a tool update does not rebuild GCC.
+# elf2mod.exe and cifc.exe are 32-bit Windows tools. amd64 uses wine32.
+# arm64 has no i386 Wine, so it runs an x86_64 WoW64 Wine build under box64.
+# Keep this layer after the toolchain so a tool update does not rebuild GCC.
 ARG TARGETARCH
 RUN set -eux; \
     apt-get update; \
@@ -112,11 +112,32 @@ RUN set -eux; \
         apt-get update; \
         wine_pkgs="wine wine32"; \
     else \
-        wine_pkgs="wine"; \
+        wine_pkgs=""; \
     fi; \
     apt-get install -y --no-install-recommends \
         $wine_pkgs gcc-arm-none-eabi libnewlib-arm-none-eabi p7zip-full msitools \
     && rm -rf /var/lib/apt/lists/* \
+    && if [ "$TARGETARCH" != "amd64" ]; then \
+        git clone --depth 1 --branch v0.4.4 https://github.com/ptitSeb/box64 /tmp/box64; \
+        cmake -S /tmp/box64 -B /tmp/box64/build -DCMAKE_BUILD_TYPE=RelWithDebInfo; \
+        cmake --build /tmp/box64/build -j"$(nproc)"; \
+        cmake --install /tmp/box64/build; \
+        rm -rf /tmp/box64; \
+        wget -O /tmp/wine.tar.xz --tries=8 --timeout=60 --waitretry=15 \
+            "https://github.com/Kron4ek/Wine-Builds/releases/download/11.19/wine-11.19-amd64-wow64.tar.xz"; \
+        mkdir -p /opt/wine-amd64; \
+        tar -xJf /tmp/wine.tar.xz -C /opt/wine-amd64 --strip-components=1; \
+        rm -f /tmp/wine.tar.xz; \
+        printf '%s\n' \
+            '#!/bin/sh' \
+            'export WINEDEBUG="${WINEDEBUG:--all}"' \
+            'export WINEDLLOVERRIDES="${WINEDLLOVERRIDES:-mscoree,mshtml=}"' \
+            'export BOX64_NOBANNER=1' \
+            'export BOX64_LOG=0' \
+            'exec /usr/local/bin/box64 /opt/wine-amd64/bin/wine "$@"' \
+            > /usr/local/bin/wine; \
+        chmod 755 /usr/local/bin/wine; \
+    fi \
     && mkdir -p /opt/brew-toolset/bin/elf2mod/src/gnu /opt/zeebo/bin \
     && test -d /usr/lib/arm-none-eabi/include \
     && ln -sfn /usr/lib/arm-none-eabi /opt/zeebo/arm-none-eabi \
