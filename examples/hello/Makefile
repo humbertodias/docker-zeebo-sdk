@@ -50,7 +50,7 @@ hello.mif: hello.cif hello.bid
 	$(CIFC) -I . hello.cif -mif $@
 
 hello.elf: $(SRCS) hello.bid
-	@test -f $(BREWDIR)/src/AEEAppGen.c || { echo "BREW SDK not found at $(BREWDIR). Mount your BREW 4.0.2 tree on /opt/brew (inc/ and sdk/)."; exit 1; }
+	@test -f $(BREWDIR)/src/AEEAppGen.c || { echo "BREW SDK not found at $(BREWDIR)."; exit 1; }
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(SRCS)
 
 clean:

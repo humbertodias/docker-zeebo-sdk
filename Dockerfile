@@ -126,14 +126,35 @@ RUN chmod 755 /opt/brew-toolset/bin/elf2mod.exe /opt/brew-toolset/bin/cifc.exe
 
 ENV WINEDEBUG=-all
 
-# BREW 4.0.2 SP19 (inc + sdk). Populated from sdk/brew at build time.
-# That tree is not committed; a checkout without it still builds.
-# sdk-check warns at startup when the headers are absent.
-COPY sdk/brew/ /opt/brew/
-COPY bin/sdk-check /usr/local/bin/sdk-check
-RUN chmod 755 /usr/local/bin/sdk-check
+# BREW 4.0.2 SP19, then the Zeebo IHID extension from ZeeboSDKInstaller.msi.
+# Downloaded at build time so the image already has the headers.
 ENV BREWDIR=/opt/brew/sdk
+RUN set -eux; \
+    brew_exe=$(mktemp); \
+    zeebo_msi=$(mktemp); \
+    wget -O "$brew_exe" "https://archive.org/download/bmp-brewplatform-4.0.2.20-setup-0/BMP_BREWPLATFORM_4.0.2.20_SETUP_0.exe"; \
+    mkdir -p /opt/brew; \
+    7z x "$brew_exe" -o/opt/brew \
+        "BREW 4.0.2 SP19/inc" \
+        "BREW 4.0.2 SP19/sdk"; \
+    mv "/opt/brew/BREW 4.0.2 SP19/inc" /opt/brew/inc; \
+    mv "/opt/brew/BREW 4.0.2 SP19/sdk" /opt/brew/sdk; \
+    rmdir "/opt/brew/BREW 4.0.2 SP19"; \
+    rm -f "$brew_exe"; \
+    test -f /opt/brew/sdk/inc/AEE.h; \
+    test -f /opt/brew/sdk/src/AEEAppGen.c; \
+    wget -O "$zeebo_msi" "https://archive.org/download/zeebo-sdkinstaller/ZeeboSDKInstaller.msi"; \
+    tmp=$(mktemp -d); \
+    ( cd "$tmp" && msiextract "$zeebo_msi" >/dev/null ); \
+    ext="$tmp/BREW402SP09 IHID Extension Folder"; \
+    packs="$tmp/BREW402SP09 Devicepacks Folder/devicepacks"; \
+    test -f "$ext/sdk/inc/AEEIHID.h"; \
+    cp -a "$ext/sdk/inc/." /opt/brew/sdk/inc/; \
+    cp -a "$ext/sdk/src/." /opt/brew/sdk/src/; \
+    mkdir -p /opt/brew/devicepacks; \
+    cp -a "$packs/." /opt/brew/devicepacks/; \
+    rm -rf "$tmp" "$zeebo_msi"; \
+    test -f /opt/brew/sdk/inc/AEEIHID.h
 
 WORKDIR /src
-ENTRYPOINT ["sdk-check"]
 CMD ["bash"]

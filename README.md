@@ -9,11 +9,7 @@ Linux/amd64 image with a Zeebo homebrew toolchain.
 docker run --rm -it -v "$PWD":/src hldtux/zeebo-sdk
 ```
 
-The BREW headers are not in the image. If `sdk/brew` is mounted and still empty, the container downloads the BREW installer and the Zeebo IHID extension and unpacks them. [SDK.md](SDK.md) has the details. Mount that directory to compile an applet:
-
-```bash
-docker run --rm -it -v "$PWD":/src -v "$PWD/sdk/brew":/opt/brew hldtux/zeebo-sdk
-```
+The BREW 4.0.2 headers and the Zeebo IHID extension are downloaded when the image is built. [SDK.md](SDK.md) shows where they land. `BREWDIR` is `/opt/brew/sdk`.
 
 ## Example
 
