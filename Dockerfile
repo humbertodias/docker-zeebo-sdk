@@ -1,5 +1,6 @@
-# Zeebo (Tectoy) homebrew toolchain (linux/amd64).
+# Zeebo (Tectoy) homebrew toolchain (linux/amd64 and linux/arm64).
 #   docker build --platform linux/amd64 -t zeebo-sdk .
+#   docker build --platform linux/arm64 -t zeebo-sdk .
 #
 # Toolchain only: does not clone a game repo or bake Bennu into the image.
 # The console is an ARM1136 (ARMv6, soft-float) running BREW. Shipped modules
@@ -100,12 +101,21 @@ RUN set -eux; \
     rm -f /tmp/zeebo-smoke.elf; \
     chmod -R a+rX /opt/zeebo
 
-# 32-bit Wine exists only to run elf2mod.exe and cifc.exe. Keep this layer
-# after the toolchain so a tool update does not rebuild GCC.
-RUN dpkg --add-architecture i386 \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
-        wine wine32 gcc-arm-none-eabi libnewlib-arm-none-eabi p7zip-full msitools \
+# elf2mod.exe and cifc.exe are 32-bit Windows tools. amd64 installs wine32.
+# arm64 has no i386 archive, so it installs Wine without wine32. Keep this
+# layer after the toolchain so a tool update does not rebuild GCC.
+ARG TARGETARCH
+RUN set -eux; \
+    apt-get update; \
+    if [ "$TARGETARCH" = "amd64" ]; then \
+        dpkg --add-architecture i386; \
+        apt-get update; \
+        wine_pkgs="wine wine32"; \
+    else \
+        wine_pkgs="wine"; \
+    fi; \
+    apt-get install -y --no-install-recommends \
+        $wine_pkgs gcc-arm-none-eabi libnewlib-arm-none-eabi p7zip-full msitools \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /opt/brew-toolset/bin/elf2mod/src/gnu /opt/zeebo/bin \
     && test -d /usr/lib/arm-none-eabi/include \

@@ -3,7 +3,7 @@
 
 # zeebo-sdk
 
-Linux/amd64 image with a Zeebo homebrew toolchain.
+Linux/amd64 and linux/arm64 image with a Zeebo homebrew toolchain.
 
 ```bash
 docker run --rm -it -v "$PWD":/src hldtux/zeebo-sdk
