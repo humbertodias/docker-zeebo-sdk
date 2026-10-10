@@ -129,12 +129,13 @@ RUN set -eux; \
         tar -xJf /tmp/wine.tar.xz -C /opt/wine-amd64 --strip-components=1; \
         rm -f /tmp/wine.tar.xz; \
         printf '%s\n' \
-            '#!/bin/sh' \
+            '#!/bin/bash' \
             'export WINEDEBUG="${WINEDEBUG:--all}"' \
-            'export WINEDLLOVERRIDES="${WINEDLLOVERRIDES:-mscoree,mshtml=}"' \
+            'export WINEDLLOVERRIDES="${WINEDLLOVERRIDES:-mscoree,mshtml,winegstreamer,winewayland.drv,winex11.drv,winepulse.drv,winedmo=d}"' \
             'export BOX64_NOBANNER=1' \
             'export BOX64_LOG=0' \
-            'exec /usr/local/bin/box64 /opt/wine-amd64/bin/wine "$@"' \
+            'exec /usr/local/bin/box64 /opt/wine-amd64/bin/wine "$@" \' \
+            '  2> >(grep --line-buffered -v -E "Error initializing native lib|Error: loading a needed libs in elf" >&2)' \
             > /usr/local/bin/wine; \
         chmod 755 /usr/local/bin/wine; \
     fi \
