@@ -1,25 +1,3 @@
-# On the host this re-enters the SDK image. Inside the image the toolchain
-# rules below build hello.mod and hello.mif.
-IMAGE ?= hldtux/zeebo-sdk
-HERE  := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-
-ifeq ($(wildcard /opt/brew-toolset/bin/elf2mod.exe),)
-
-.PHONY: all
-all:
-	docker run --rm --platform linux/amd64 \
-		-v "$(HERE)":/src -w /src \
-		$(IMAGE) \
-		make $(MAKECMDGOALS)
-
-ifneq ($(MAKECMDGOALS),)
-.PHONY: $(MAKECMDGOALS)
-$(MAKECMDGOALS): all
-	@:
-endif
-
-else
-
 # BREW 4.0.2 SP19 lives in the image. sdk/inc is the legacy applet API;
 # headers there include /opt/brew/inc with a relative path.
 BREWDIR ?= /opt/brew/sdk
@@ -55,5 +33,3 @@ hello.elf: $(SRCS) hello.bid
 
 clean:
 	rm -f hello.elf hello.mod hello.mif
-
-endif
